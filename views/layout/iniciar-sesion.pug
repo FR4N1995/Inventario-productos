@@ -1,0 +1,37 @@
+html(lang="es")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Castores | #{pagina}
+        link(rel="stylesheet", href="/css/app.css")
+    body(class="min-h-screen bg-gray-50") 
+ 
+        main(class="mx-auto container mt-10 px-2")
+           block contenido 
+
+        block scripts
+            script(src="https://cdn.jsdelivr.net/npm/sweetalert2@11") 
+            if mensaje
+                - const msg = JSON.stringify(mensaje)
+                    script.
+                        console.log("Flash mensaje:", !{msg});
+                        const mensaje = !{msg};
+                        Swal.fire({
+                        icon: mensaje.tipo,
+                        title: mensaje.titulo,
+                        text: mensaje.texto,
+                        confirmButtonColor: mensaje.tipo === 'success' ? '#16a34a' : '#d33',
+                        background: '#f9fafb',
+                        color: '#1f2937',
+                        iconColor: mensaje.tipo === 'success' ? '#16a34a' : '#e11d48',
+                        showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        },
+                        customClass: {
+                            popup: 'rounded-2xl shadow-2xl p-4',
+                            confirmButton: 'px-5 py-2 text-white font-semibold rounded-lg',
+                        }
+                        });

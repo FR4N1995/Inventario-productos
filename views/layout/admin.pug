@@ -1,0 +1,133 @@
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Castores | #{pagina}
+
+    block styles
+    link(rel="stylesheet", href="/css/app.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css")
+
+  body(class="min-h-screen bg-gray-50")
+
+    // ===== HEADER =====
+    header(class="bg-gray-950 shadow-md sticky top-0 z-50")
+      .container.mx-auto.flex.justify-between.items-center.px-4.py-3
+
+        // Logo
+        a(href=usuario.admin == 1 ? "/administrador/home" : "/")
+          h1(class="text-2xl text-white font-extrabold flex items-center gap-2")
+            i(class="fa fa-box text-green-500")
+            | Grupo 
+            span(class="font-normal text-green-400") Castores
+
+        // Botón hamburguesa
+        button#menu-toggle(type="button" class="md:hidden text-white text-2xl")
+          i(class="fas fa-bars")
+
+        // ===== MENU DESKTOP =====
+        nav#menu(class="hidden md:flex items-center gap-6 text-white font-semibold")
+
+          if usuario.admin === 1
+            a(
+              href='/administrador/home'
+              class="flex items-center gap-2 hover:text-green-400 transition"
+            )
+              i(class="fa fa-box")
+              | Productos
+
+            a(
+              href='/administrador/historial'
+              class="flex items-center gap-2 hover:text-green-400 transition"
+            )
+              i(class="fa fa-clock-rotate-left")
+              | Historial
+          else
+            a(
+              href='/administrador/home'
+              class="flex items-center gap-2 hover:text-green-400 transition"
+            )
+              i(class="fa fa-box")
+              | Productos
+
+          // Usuario (desktop)
+          div(class="hidden lg:flex items-center gap-2 bg-gray-800 px-3 py-1 rounded-lg")
+            i(class="fa fa-user text-green-400")
+            span(class="text-sm")= usuario.nombre
+
+          // Logout
+          form(action="/cerrar-session" method="POST")
+            input(
+              type="submit"
+              value="Salir"
+              class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg cursor-pointer text-sm font-bold transition"
+            )
+
+    // ===== MENU MOBILE =====
+    nav#mobile-menu(class="hidden md:hidden flex flex-col text-white text-lg font-semibold bg-gray-900 w-full fixed inset-0 mt-16 z-50 p-6 space-y-4")
+
+      if usuario.admin === 1
+        a(href='/administrador/home' class="flex items-center gap-2 border-b border-gray-700 pb-3")
+          i(class="fa fa-box")
+          | Productos
+
+        a(href='/administrador/historial' class="flex items-center gap-2 border-b border-gray-700 pb-3")
+          i(class="fa fa-clock-rotate-left")
+          | Historial
+      else
+        a(href='/administrador/home' class="flex items-center gap-2 border-b border-gray-700 pb-3")
+          i(class="fa fa-box")
+          | Productos
+
+      // Usuario móvil
+      div(class="flex items-center gap-2 bg-gray-800 px-3 py-2 rounded-lg")
+        i(class="fa fa-user text-green-400")
+        span= usuario.nombre
+
+      form(action="/cerrar-session" method="POST" class="w-full")
+        input(
+          type="submit"
+          value="Cerrar Sesión"
+          class="bg-red-600 hover:bg-red-700 py-3 px-4 rounded-lg cursor-pointer w-full font-bold"
+        )
+
+    // ===== CONTENIDO =====
+    main(class="mx-auto mt-10 px-4 container max-w-screen-xl")
+
+      // Usuario arriba del contenido (opcional, lo dejé más limpio)
+        div(class="mb-4 flex justify-end")
+            div(class="flex items-center gap-2 text-gray-600 text-sm bg-white px-3 py-2 rounded-lg shadow")
+            i(class="fa fa-user")
+            span Usuario:
+            span(class="font-semibold text-gray-800")= usuario.nombre
+
+      block contenido
+
+    // ===== SCRIPTS =====
+    block scripts
+      script(src="https://cdn.jsdelivr.net/npm/sweetalert2@11") 
+      script(src="/js/menuHamburguesa.js")
+      if mensaje
+        - const msg = JSON.stringify(mensaje)
+            script.
+                console.log("Flash mensaje:", !{msg});
+                const mensaje = !{msg};
+                Swal.fire({
+                icon: mensaje.tipo,
+                title: mensaje.titulo,
+                text: mensaje.texto,
+                confirmButtonColor: mensaje.tipo === 'success' ? '#16a34a' : '#d33',
+                background: '#f9fafb',
+                color: '#1f2937',
+                iconColor: mensaje.tipo === 'success' ? '#16a34a' : '#e11d48',
+                showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                },
+                customClass: {
+                    popup: 'rounded-2xl shadow-2xl p-4',
+                    confirmButton: 'px-5 py-2 text-white font-semibold rounded-lg',
+                }
+                });

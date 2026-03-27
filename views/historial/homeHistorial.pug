@@ -1,0 +1,115 @@
+extends ../layout/admin
+
+block contenido 
+  .py-10 
+
+    // ===== TITULO =====
+    h1.text-4xl.my-7.font-bold.text-center.flex.items-center.justify-center.gap-2
+      i(class="fa fa-clock-rotate-left text-indigo-600")
+      | Grupo 
+      span.font-normal Castores
+
+    h2.text-center.text-2xl.font-extrabold.text-gray-700= pagina 
+
+    // ===== FILTROS =====
+    div(class="flex justify-center mt-6 mb-8")
+      div(class="bg-white shadow-md rounded-xl p-2 flex gap-2")
+
+        a(href="/administrador/historial" class="px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white flex items-center gap-2")
+          i(class="fa fa-list")
+          | Todos
+
+        a(href="/administrador/historialEntradas" class="px-4 py-2 rounded-lg text-sm font-semibold bg-green-100 text-green-700 hover:bg-green-200 flex items-center gap-2")
+          i(class="fa fa-arrow-down")
+          | Entradas
+
+        a(href="/administrador/historialSalidas" class="px-4 py-2 rounded-lg text-sm font-semibold bg-red-100 text-red-700 hover:bg-red-200 flex items-center gap-2")
+          i(class="fa fa-arrow-up")
+          | Salidas
+
+    // ===== TABLA =====
+    if historicos.length
+      div(class="overflow-x-auto bg-white shadow-lg rounded-xl")
+        table(class="min-w-full divide-y divide-gray-200")
+
+          thead(class="bg-gray-200")
+            tr
+              th(class="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase") Tipo
+              th(class="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase") Usuario
+              th(class="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase") Email
+              th(class="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase") Producto
+              th(class="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase") Cantidad
+              th(class="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase") Fecha
+
+          tbody(class="bg-white divide-y divide-gray-200")
+            each historico in historicos
+              tr(class="hover:bg-gray-50 transition")
+
+                // Tipo
+                td(class="px-6 py-4 whitespace-nowrap")
+                  span(
+                    class=`px-2 py-1 rounded text-xs font-bold ${
+                      historico.tipo === 'entrada' 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-red-100 text-red-700'
+                    }`
+                  )= historico.tipo
+
+                // Usuario
+                td(class="px-6 py-4 whitespace-nowrap text-gray-700 font-semibold")
+                  = historico.usuario.nombre
+
+                // Email
+                td(class="px-6 py-4 whitespace-nowrap text-gray-600 text-sm")
+                  = historico.usuario.email
+
+                // Producto
+                td(class="px-6 py-4 whitespace-nowrap text-gray-700")
+                  = historico.producto.nombre
+
+                // Cantidad
+                td(class="px-6 py-4 whitespace-nowrap text-gray-800 font-bold")
+                  = historico.cantidad
+
+                // Fecha
+                td(class="px-6 py-4 whitespace-nowrap text-gray-500 text-sm")
+                  i(class="fa fa-calendar mr-1")
+                  = formatearFecha(historico.createdAt)
+
+        // ===== PAGINACION =====
+        div(class="px-4 py-3 flex items-center justify-between border-t border-gray-200")
+
+          div(class="flex-1 flex justify-between sm:hidden")
+            a(
+              href=`/administrador/historial?pagina=${paginaActual - 1}`
+              class=`${paginaActual === "1" ? "pointer-events-none opacity-50" : ""} px-4 py-2 border rounded-md text-sm bg-white`
+            ) Anterior
+
+            a(
+              href=`/administrador/historial?pagina=${paginaActual + 1}`
+              class=`${paginaActual === paginas ? "pointer-events-none opacity-50" : ""} px-4 py-2 border rounded-md text-sm bg-white`
+            ) Siguiente
+
+          div(class="hidden sm:flex sm:items-center sm:justify-between w-full")
+
+            p(class="text-sm text-gray-600")
+              span.font-medium #{offset + 1}
+              |  a 
+              span.font-medium #{total < limit + offset ? total : limit + offset}
+              |  de 
+              span.font-medium #{total} resultados
+
+            nav(class="inline-flex rounded-md shadow-sm")
+              - var n = 1
+              while n <= paginas
+                a(
+                  href=`/administrador/historial?pagina=${n}`
+                  class=`${paginaActual == n ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'} px-4 py-2 border text-sm`
+                ) #{n++}
+
+    else 
+      p(class="text-center text-gray-500 mt-10") Todavía no tienes historial
+
+block scripts 
+  script(src="/js/cambiarEstado.js")
+  script(src="/js/menuHamburguesa.js")
